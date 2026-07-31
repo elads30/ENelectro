@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EElectro - מוצרי חשמל יוקרתיים לבית</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- SVG Sprite Definitions for High Performance Icons -->
+  <svg style="display: none;">
+    <defs>
+      <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#6366f1" />
+        <stop offset="100%" stop-color="#14b8a6" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- -----------------------------------------------------------
+       HEADER
+  ------------------------------------------------------------ -->
+  <header>
+    <div class="header-container">
+      <!-- Logo -->
+      <a href="#" class="logo">
+        <svg viewBox="0 0 24 24">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+        </svg>
+        <span>EElectro</span>
+      </a>
+
+      <!-- Search Bar -->
+      <div class="search-container">
+        <input type="text" class="search-input" id="catalog-search" placeholder="חפש מוצרים, מותגים או קטגוריות לבית..." oninput="triggerSearch()">
+        <button class="search-btn" onclick="triggerSearch()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Navigation Actions -->
+      <div class="nav-actions">
+        <!-- User Profile widget -->
+        <div class="user-profile">
+          <div class="user-avatar" id="user-initials">מ</div>
+          <div class="user-info">
+            <span class="user-greeting">שלום,</span>
+            <span class="username" id="display-username">אורח</span>
+            <button class="signout-btn" onclick="logout()">התנתק</button>
+          </div>
+        </div>
+
+        <!-- Cart widget -->
+        <div class="cart-widget" onclick="toggleCart(true)">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+          </svg>
+          <span class="cart-count" id="cart-count">0</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- -----------------------------------------------------------
+       MAIN CONTENT LAYOUT
+  ------------------------------------------------------------ -->
+  <main class="store-layout">
+
+    <!-- Sidebar Filters -->
+    <aside class="sidebar">
+      <!-- Category Filter -->
+      <div class="filter-group">
+        <h3 class="filter-section-title">קטגוריות מוצרים</h3>
+        <div class="category-filters">
+          <button class="cat-filter-btn active" data-category="all" onclick="setCategoryFilter('all', this)">הכל לבית</button>
+          <button class="cat-filter-btn" data-category="kitchen" onclick="setCategoryFilter('kitchen', this)">מטבח טכנולוגי</button>
+          <button class="cat-filter-btn" data-category="cleaning" onclick="setCategoryFilter('cleaning', this)">ניקיון ותחזוקה</button>
+          <button class="cat-filter-btn" data-category="climate" onclick="setCategoryFilter('climate', this)">בקרת אקלים</button>
+          <button class="cat-filter-btn" data-category="smarthome" onclick="setCategoryFilter('smarthome', this)">בית חכם</button>
+        </div>
+      </div>
+
+      <!-- Price Slider -->
+      <div class="filter-group">
+        <h3 class="filter-section-title">טווח מחירים</h3>
+        <div class="price-filter-wrapper">
+          <div class="price-slider-container">
+            <input type="range" class="price-slider" id="price-limit" min="100" max="3000" step="50" value="3000" oninput="updatePriceSliderLabel(this.value)">
+          </div>
+          <div class="price-values">
+            <span>₪100</span>
+            <span id="price-limit-label">עד ₪3000</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ratings Filter -->
+      <div class="filter-group">
+        <h3 class="filter-section-title">דירוג לקוחות</h3>
+        <div class="rating-filters">
+          <div class="rating-filter-row" data-min-rating="5" onclick="setRatingFilter(5, this)">
+            <div class="stars">★★★★★</div>
+            <span>רק 5 כוכבים</span>
+          </div>
+          <div class="rating-filter-row" data-min-rating="4" onclick="setRatingFilter(4, this)">
+            <div class="stars">★★★★☆</div>
+            <span>4 כוכבים ומעלה</span>
+          </div>
+          <div class="rating-filter-row" data-min-rating="3.5" onclick="setRatingFilter(3.5, this)">
+            <div class="stars">★★★☆☆</div>
+            <span>3.5 כוכבים ומעלה</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clear Button -->
+      <button class="clear-filters-btn" onclick="resetAllFilters()">נקה את כל המסננים</button>
+    </aside>
+
+    <!-- Catalog Content Panel -->
+    <section class="catalog-content">
+      
+      <!-- Special Deal Hero Banner -->
+      <div class="hero-banner" id="featured-banner">
+        <div class="hero-text">
+          <span class="hero-badge">מבצע מיוחד לחברים</span>
+          <h2 class="hero-title" id="featured-title">BaristaPro Touch</h2>
+          <p class="hero-desc" id="featured-desc">מכונת אספרסו אוטומטית המאפשרת לך ליהנות מקפה איטלקי משובח ואיכותי בלחיצת כפתור אחת, עם קציף חלב דיגיטלי מתקדם.</p>
+          <button class="hero-btn" id="featured-cta">גלה עוד עכשיו</button>
+        </div>
+        <div class="hero-image-wrapper">
+          <img src="./assets/baristapro.png" alt="BaristaPro Touch Featured" class="hero-img" id="featured-img">
+        </div>
+      </div>
+
+      <!-- Catalog Header Controls -->
+      <div class="catalog-header">
+        <h2 class="catalog-title" id="results-count-title">כל המוצרים הזמינים</h2>
+        <div class="sort-wrapper">
+          <span class="sort-label">מיין לפי:</span>
+          <select class="sort-select" id="catalog-sort" onchange="handleSortChange()">
+            <option value="popular">הפופולריים ביותר</option>
+            <option value="price-low">מחיר: מהנמוך לגבוה</option>
+            <option value="price-high">מחיר: מהגבוה לנמוך</option>
+            <option value="rating">דירוג לקוחות</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Product Cards Grid -->
+      <div class="product-grid" id="product-grid-container">
+        <!-- Rendered Dynamically by app.js -->
+      </div>
+    </section>
+  </main>
+
+  <!-- -----------------------------------------------------------
+       SLIDE-OUT CART DRAWER
+  ------------------------------------------------------------ -->
+  <div class="cart-overlay" id="cart-overlay" onclick="toggleCart(false)"></div>
+  <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-header">
+      <h3 class="cart-title">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="22" height="22">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+        </svg>
+        סל הקניות שלך
+      </h3>
+      <button class="cart-close-btn" onclick="toggleCart(false)">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Items Grid inside Drawer -->
+    <div class="cart-items-container" id="cart-items-wrapper">
+      <!-- Populated dynamically -->
+    </div>
+
+    <!-- Cart Footer with Totals -->
+    <div class="cart-footer">
+      <div class="promo-container">
+        <input type="text" class="promo-input" id="promo-code-input" placeholder="קוד קופון (WELCOME10)">
+        <button class="promo-apply-btn" onclick="applyPromoCode()">החל</button>
+      </div>
+
+      <div class="cart-summary-row">
+        <span>סכום ביניים:</span>
+        <span id="cart-subtotal">₪0</span>
+      </div>
+      <div class="cart-summary-row discount" id="discount-row" style="display: none;">
+        <span>הנחה (10%):</span>
+        <span id="cart-discount">-₪0</span>
+      </div>
+      <div class="cart-summary-row">
+        <span>מע\"מ (17% כלול):</span>
+        <span id="cart-tax">₪0</span>
+      </div>
+      <div class="cart-total-row">
+        <span>סה\"כ לתשלום:</span>
+        <span id="cart-total">₪0</span>
+      </div>
+
+      <button class="checkout-btn" onclick="openCheckoutWizard()">המשך לתשלום מאובטח</button>
+    </div>
+  </div>
+
+  <!-- -----------------------------------------------------------
+       PRODUCT DETAIL MODAL
+  ------------------------------------------------------------ -->
+  <div class="modal-overlay" id="product-modal" onclick="closeProductModal(event)">
+    <div class="modal-wrapper">
+      <button class="modal-close-btn" onclick="closeProductModalDirect()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+
+      <div class="detail-layout" id="product-detail-content">
+        <!-- Rendered Dynamically by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- -----------------------------------------------------------
+       CHECKOUT WIZARD MODAL
+  ------------------------------------------------------------ -->
+  <div class="modal-overlay" id="checkout-modal" onclick="closeCheckoutModal(event)">
+    <div class="modal-wrapper checkout-wrapper">
+      <button class="modal-close-btn" onclick="closeCheckoutModalDirect()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+
+      <div class="checkout-steps">
+        <div class="checkout-header">
+          <h3>קופה מהירה ומאובטחת</h3>
+          <div class="checkout-step-indicator">
+            <div class="step-node active" id="step-node-1">1</div>
+            <div class="step-node" id="step-node-2">2</div>
+            <div class="step-node" id="step-node-3">3</div>
+          </div>
+        </div>
+
+        <form id="checkout-form" onsubmit="handleCheckoutSubmit(event)">
+          <!-- Step 1: Shipping Information -->
+          <div class="checkout-step-content active" id="step-content-1">
+            <h4 style="font-size: 1.1rem; margin-bottom: 8px;">פרטי משלוח</h4>
+            
+            <div class="form-group">
+              <label for="shipping-address">כתובת מגורים מלאה</label>
+              <div class="input-wrapper">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="left: auto; right: 14px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <input type="text" id="shipping-address" required placeholder="רחוב, מספר בית, דירה, עיר" style="padding-left: 14px; padding-right: 42px;">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="shipping-phone">מספר טלפון ליצירת קשר</label>
+              <div class="input-wrapper">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="left: auto; right: 14px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305 1.142a13.928 13.928 0 006.182 6.182l1.142-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                <input type="tel" id="shipping-phone" required placeholder="050-0000000" pattern="[0-9\-]{9,11}" style="direction: ltr; text-align: left; padding-left: 14px; padding-right: 42px;">
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Payment Details -->
+          <div class="checkout-step-content" id="step-content-2">
+            <h4 style="font-size: 1.1rem; margin-bottom: 8px;">פרטי תשלום (סימולציה)</h4>
+
+            <div class="form-group">
+              <label for="card-name">שם על גבי הכרטיס</label>
+              <div class="input-wrapper">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="left: auto; right: 14px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                <input type="text" id="card-name" placeholder="שם מלא באנגלית" style="padding-left: 14px; padding-right: 42px;">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="card-number">מספר כרטיס אשראי</label>
+              <div class="input-wrapper">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="left: auto; right: 14px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                <input type="text" id="card-number" placeholder="4580 0000 0000 0000" pattern="[0-9\s]{16,19}" style="direction: ltr; text-align: left; padding-left: 14px; padding-right: 42px;">
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label for="card-expiry">תוקף (MM/YY)</label>
+                <input type="text" id="card-expiry" placeholder="12/28" pattern="(0[1-9]|1[0-2])\/[2-3][0-9]" style="direction: ltr; text-align: left;">
+              </div>
+              <div class="form-group">
+                <label for="card-cvv">CVV</label>
+                <input type="text" id="card-cvv" placeholder="000" pattern="[0-9]{3}" style="direction: ltr; text-align: left;">
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Success Receipt screen -->
+          <div class="checkout-step-content" id="step-content-3">
+            <div class="receipt-card">
+              <div class="receipt-success-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <h4 class="receipt-title">הרכישה בוצעה בהצלחה!</h4>
+              <p class="receipt-number" id="receipt-order-id">הזמנה מס' #00000</p>
+              
+              <div class="receipt-items" id="receipt-items-list">
+                <!-- Rendered dynamically -->
+              </div>
+
+              <div class="receipt-total-row">
+                <span>שולם סה\"כ:</span>
+                <span id="receipt-total-paid">₪0</span>
+              </div>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); text-align: center; margin-top: 10px;">מוצרי EElectro בדרך אלייך! קבלה מפורטת נשלחה למייל המנוי.</p>
+            </div>
+          </div>
+
+          <!-- Wizard control buttons -->
+          <div class="checkout-buttons-row" id="checkout-buttons-container">
+            <button type="button" class="checkout-prev-btn" id="btn-checkout-prev" onclick="changeCheckoutStep(-1)" style="display: none;">חזור</button>
+            <button type="button" class="checkout-next-btn" id="btn-checkout-next" onclick="changeCheckoutStep(1)">המשך</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Load Database and Controller -->
+  <script src="products.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
