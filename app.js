@@ -1,7 +1,7 @@
 // Session & Auth Guard
 let currentUser = null;
 function checkAuth() {
-  const session = sessionStorage.getItem('eelectro_session');
+  const session = sessionStorage.getItem('enelectro_session');
   if (!session) {
     window.location.href = 'login.html';
     return false;
@@ -31,7 +31,7 @@ function setupHeader() {
 }
 
 function logout() {
-  sessionStorage.removeItem('eelectro_session');
+  sessionStorage.removeItem('enelectro_session');
   window.location.href = 'login.html';
 }
 
@@ -40,14 +40,14 @@ function logout() {
 // -------------------------------------------------------------
 function loadCart() {
   if (!currentUser) return;
-  const storedCart = localStorage.getItem(`eelectro_cart_${currentUser.email}`);
+  const storedCart = localStorage.getItem(`enelectro_cart_${currentUser.email}`);
   cart = storedCart ? JSON.parse(storedCart) : [];
   updateCartBadge();
 }
 
 function saveCart() {
   if (!currentUser) return;
-  localStorage.setItem(`eelectro_cart_${currentUser.email}`, JSON.stringify(cart));
+  localStorage.setItem(`enelectro_cart_${currentUser.email}`, JSON.stringify(cart));
   updateCartBadge();
 }
 
@@ -670,7 +670,7 @@ function updateCheckoutStepView() {
 }
 
 function submitOrder() {
-  const orderId = 'EV-' + Math.floor(100000 + Math.random() * 900000);
+  const orderId = 'EN-' + Math.floor(100000 + Math.random() * 900000);
   document.getElementById('receipt-order-id').textContent = `הזמנה מס' #${orderId}`;
 
   // Build items list for receipt card

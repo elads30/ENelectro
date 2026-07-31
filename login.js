@@ -47,11 +47,11 @@ function handleLogin(event) {
   const email = document.getElementById('login-email').value.trim().toLowerCase();
   const password = document.getElementById('login-password').value;
 
-  const users = JSON.parse(localStorage.getItem('eelectro_users')) || [];
+  const users = JSON.parse(localStorage.getItem('enelectro_users')) || [];
   const user = users.find(u => u.email === email && u.password === password);
 
   if (user) {
-    sessionStorage.setItem('eelectro_session', JSON.stringify({
+    sessionStorage.setItem('enelectro_session', JSON.stringify({
       email: user.email,
       name: user.name
     }));
@@ -71,7 +71,7 @@ function handleRegister(event) {
   const email = document.getElementById('register-email').value.trim().toLowerCase();
   const password = document.getElementById('register-password').value;
 
-  const users = JSON.parse(localStorage.getItem('eelectro_users')) || [];
+  const users = JSON.parse(localStorage.getItem('enelectro_users')) || [];
   const userExists = users.some(u => u.email === email);
 
   if (userExists) {
@@ -82,10 +82,10 @@ function handleRegister(event) {
   // Create new user
   const newUser = { name, email, password };
   users.push(newUser);
-  localStorage.setItem('eelectro_users', JSON.stringify(users));
+  localStorage.setItem('enelectro_users', JSON.stringify(users));
 
   // Set current session
-  sessionStorage.setItem('eelectro_session', JSON.stringify({
+  sessionStorage.setItem('enelectro_session', JSON.stringify({
     email: newUser.email,
     name: newUser.name
   }));
@@ -99,19 +99,19 @@ function handleRegister(event) {
 // Initial configuration
 window.addEventListener('DOMContentLoaded', () => {
   // If user is already logged in, redirect straight to store
-  const session = sessionStorage.getItem('eelectro_session');
+  const session = sessionStorage.getItem('enelectro_session');
   if (session) {
     window.location.href = 'index.html';
   }
   
   // Seed a default admin/test user if database is empty
-  const users = JSON.parse(localStorage.getItem('eelectro_users')) || [];
+  const users = JSON.parse(localStorage.getItem('enelectro_users')) || [];
   if (users.length === 0) {
     users.push({
       name: "משתמש בדיקה",
-      email: "test@eelectro.co.il",
+      email: "test@enelectro.co.il",
       password: "password123"
     });
-    localStorage.setItem('eelectro_users', JSON.stringify(users));
+    localStorage.setItem('enelectro_users', JSON.stringify(users));
   }
 });
